@@ -5,6 +5,14 @@ class NotImplementedException extends Error {
 }
 
 class ICrud {
+    connected() {
+        throw new NotImplementedException();
+    }
+
+    isConnected() {
+        throw new NotImplementedException();
+    }
+
     create(item) {
         throw new NotImplementedException();
     }
