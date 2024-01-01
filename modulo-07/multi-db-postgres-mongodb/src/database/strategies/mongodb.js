@@ -22,7 +22,7 @@ class MongoDB extends ICrud {
     }
 
     defineModel() {
-        heroeSchema = new Mongoose.Schema({
+        const heroeSchema = new Mongoose.Schema({
             nome: {
                 type: String,
                 required: true
@@ -48,14 +48,15 @@ class MongoDB extends ICrud {
         const connection = Mongoose.connection;
         this._driver = connection
         connection.once('open', () => console.log("Database rodando!"));
+        this.defineModel();
     }
 
     create(item) {
-        console.log("")
+        return this._herois.create(item);
     }
 
-    read(query) {
-        console.log("")
+    read(query, skip, limit) {
+        return this._herois.find(query);
     }
 
     update(id, item) {
