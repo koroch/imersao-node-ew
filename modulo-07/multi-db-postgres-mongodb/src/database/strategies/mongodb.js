@@ -55,16 +55,16 @@ class MongoDB extends ICrud {
         return this._herois.create(item);
     }
 
-    read(query, skip=0, limit=10) {
+    read(query, skip = 0, limit = 10) {
         return this._herois.find(query).skip(skip).limit(limit);
     }
 
     update(id, item) {
-        console.log("")
+        return this._herois.updateOne({ _id: id }, { $set: item })
     }
 
     delete(id) {
-        console.log("")
+        return this._herois.deleteOne({ _id: id })
     }
 }
 

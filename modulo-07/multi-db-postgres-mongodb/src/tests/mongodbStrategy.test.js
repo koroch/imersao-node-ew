@@ -6,15 +6,23 @@ const MOCK_HEROI_CADASTRAR = {
     nome: "Flash",
     poder: "Velocidade"
 }
-const MOCK_HEROI_ATUALIZAR = {
-    nome: "Homem de Ferro",
+const MOCK_HEROI_DEFAULT = {
+    nome: `Homem de Ferro - ${Date.now()}`,
     poder: "Tecnologia"
 }
+const MOCK_HEROI_ATUALIZAR = {
+    nome: `Patolino - ${Date.now()}`,
+    poder: "Chatice"
+}
+let MOCK_HEROI_ID = ''
 
 const context = new Context(new MongoDb());
 describe('MongoDB Suite de testes', function () {
     this.beforeAll(async function () {
         await context.connect();
+        await context.create(MOCK_HEROI_DEFAULT);
+        const result = await context.create(MOCK_HEROI_ATUALIZAR);
+        MOCK_HEROI_ID = result._id;
     })
 
     it('MongoDB Connection', async () => {
@@ -29,8 +37,21 @@ describe('MongoDB Suite de testes', function () {
     })
 
     it('list', async () => {
-        const [{ nome, poder }] = await context.read({ nome: MOCK_HEROI_CADASTRAR.nome });
+        const [{ nome, poder }] = await context.read({ nome: MOCK_HEROI_DEFAULT.nome });
         const result = { nome, poder };
-        assert.deepEqual(result, MOCK_HEROI_CADASTRAR)
+        assert.deepEqual(result, MOCK_HEROI_DEFAULT)
+    })
+
+    it('update', async () => {
+        const result = await context.update(MOCK_HEROI_ID.toString(), {
+            nome: 'pernalonga'
+        });
+        assert.deepEqual(result.modifiedCount, 1);
+    })
+
+    it('remover', async () => {
+        const result = await context.delete(MOCK_HEROI_ID.toString());
+        console.log(result)
+        assert.deepEqual(result.deletedCount, 1);
     })
 })
