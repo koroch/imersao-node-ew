@@ -37,11 +37,11 @@ class MongoDB extends ICrud {
             }
         })
 
-        this._herois = Mongoose.model('heroes', heroeSchema);
+        this._herois = Mongoose.model('herois', heroeSchema);
     }
 
     connect() {
-        Mongoose.connect('mongodb://koroch:123456@localhost:27017/heroes',
+        Mongoose.connect('mongodb://koroch:123456@localhost:27017/herois',
             { serverSelectionTimeoutMS: 5000 }
         ).catch(err => console.log('Falha na conexão!', err));
 

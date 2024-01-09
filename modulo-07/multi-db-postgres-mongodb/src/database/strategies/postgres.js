@@ -61,7 +61,7 @@ class Postgres extends ICrud {
 
     async connect() {
         this._driver = new Sequelize(
-            'heroes',
+            'herois',
             'koroch',
             '123456',
             {
