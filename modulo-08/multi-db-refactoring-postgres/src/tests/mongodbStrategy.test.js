@@ -53,6 +53,7 @@ describe('MongoDB Suite de testes', function () {
 
     it('remover', async () => {
         const result = await context.delete(MOCK_HEROI_ID.toString());
+        console.log(result)
         assert.deepEqual(result.deletedCount, 1);
     })
 })
