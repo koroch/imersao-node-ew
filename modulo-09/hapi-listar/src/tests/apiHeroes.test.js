@@ -2,15 +2,15 @@ const assert = require('assert');
 const api = require('../api');
 
 //usar function para poder usar o this
-describe('Suite de testes da API Heroes', function () { 
-    this.beforeAll(async() => {
+describe('Suite de testes da API Heroes', function () {
+    this.beforeAll(async () => {
         app = await api
     })
 
     it('listar /herois', async () => {
         const result = await app.inject({
             method: 'GET',
-            url: '/herois'
+            url: '/herois?skip=0&limit=10'
         })
         const dados = JSON.parse(result.payload);
         const statusCode = result.statusCode;
@@ -30,18 +30,18 @@ describe('Suite de testes da API Heroes', function () {
         assert.ok(dados.length === TAMANHO_LIMITE);
     })
 
-    it('listar /herois deve retornar aceitar somente limit válido', async () => {
+    it('listar /herois deve retornar erro com limit incorreto', async () => {
         const TAMANHO_LIMITE = 'AEE';
         const result = await app.inject({
             method: 'GET',
             url: `/herois?skip=0&limit=${TAMANHO_LIMITE}`
         })
-        assert.deepEqual(result.payload, '{"statusCode":500,"error":"Internal Server Error","message":"An internal server error occurred"}');
+        assert.deepEqual(result.payload, 'Erro interno no servidor');
     })
 
     it('listar /herois deve filtrar um item', async () => {
         const TAMANHO_LIMITE = 1000;
-        const NOME = "Homem de Ferro - 1704729837463";
+        const NOME = "Homem de Ferro - 1706049743310";
         const result = await app.inject({
             method: 'GET',
             url: `/herois?skip=0&limit=${TAMANHO_LIMITE}&nome=${NOME}`
