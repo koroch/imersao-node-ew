@@ -12,9 +12,20 @@ class HeroRoutes extends BaseRoute{
             handler: (request, response) => {
                 try{
                     const { skip, limit, nome } = request.query;
-                    return this.db.read()
+
+                    let query = {};
+                    if(nome){
+                        query.nome = nome;
+                    }
+
+                    if(isNaN(skip))
+                        throw Error("O tipo do skip é incorreto!");
+                    if(isNaN(limit))
+                        throw Error("O tipo do limit é incorreto!");
+
+                    return this.db.read(query, parseInt(skip), parseInt(limit))
                 }catch(err){
-                    console.error("Deu ruim! ",err.message)
+                    console.error("Deu ruim! ")
                 }
             }
         }
