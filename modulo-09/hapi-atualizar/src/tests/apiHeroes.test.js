@@ -8,7 +8,7 @@ const MOCK_HEROI_CADASTRAR = {
 
 const MOCK_HEROI_INICIAL = {
     nome: 'Arqueiro',
-    poder: 'Velocidade'
+    poder: 'Flechada'
 }
 
 let MOCK_ID = '';
@@ -97,5 +97,28 @@ describe('Suite de testes da API Heroes', function () {
             url: `/herois/${id}`,
             payload: JSON.stringify(expected)
         })
+
+        const dados = JSON.parse(result.payload);
+        const statusCode = result.statusCode;
+        assert.ok(statusCode === 200);
+        assert.deepEqual(dados.message, "Heroi atualizado com sucesso!")
+    })
+
+    it('atualizar PATCH - /herois/:id - não deve atualizar com ID incorreto', async () => {
+        const id = `5bfdb6e83f66ad3c32939fb1`;
+        const expected = {
+            poder: 'Super Mira'
+        }
+
+        const result = await app.inject({
+            method: 'PATCH',
+            url: `/herois/${id}`,
+            payload: JSON.stringify(expected)
+        })
+
+        const dados = JSON.parse(result.payload);
+        const statusCode = result.statusCode;
+        assert.ok(statusCode === 200);
+        assert.deepEqual(dados.message, "Não foi possível atualizar!")
     })
 })
