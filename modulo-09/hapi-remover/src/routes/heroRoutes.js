@@ -1,5 +1,6 @@
 const Joi = require('joi');
 const BaseRoute = require('./base/baseRoute');
+const Boom = require('boom');
 
 const failAction = async (request, response, error) => {
     throw error;
@@ -35,8 +36,8 @@ class HeroRoutes extends BaseRoute {
                     const query = { nome: { $regex: `.*${nome}*.` } };
                     return this.db.read(nome ? query : {}, skip, limit)
                 } catch (err) {
-                    console.error("Deu ruim! ", err.message)
-                    return "Erro interno no servidor"
+                    console.error("Deu ruim! ", err.message);
+                    return Boom.internal();
                 }
             }
         }
@@ -65,7 +66,7 @@ class HeroRoutes extends BaseRoute {
                     }
                 } catch (error) {
                     console.log("Deu ruim", error);
-                    return 'Internal Error!';
+                    return Boom.internal();
                 }
             }
         }
@@ -87,24 +88,22 @@ class HeroRoutes extends BaseRoute {
                 }
             },
             handler: async (request) => {
-                try{
+                try {
                     const { id } = request.params;
                     const { payload } = request;
                     const dadosString = JSON.stringify(payload);
                     const dados = JSON.parse(dadosString);
 
                     const result = await this.db.update(id, dados);
-                    
-                    if(result.modifiedCount !== 1) return {
-                        message: 'Não foi possível atualizar!'
-                    }
+
+                    if (result.modifiedCount !== 1) return Boom.preconditionFailed("ID não encontrado no banco!");
 
                     return {
                         message: 'Heroi atualizado com sucesso!'
                     }
-                }catch(error){
+                } catch (error) {
                     console.error("Deu ruim", error.message);
-                    return 'Erro interno!'
+                    return Boom.internal();
                 }
             }
         }
@@ -122,24 +121,19 @@ class HeroRoutes extends BaseRoute {
                 }
             },
             handler: async (request) => {
-                try{
+                try {
                     const { id } = request.params;
-                    const { payload } = request;
-                    const dadosString = JSON.stringify(payload);
-                    const dados = JSON.parse(dadosString);
 
-                    const result = await this.db.update(id, dados);
-                    
-                    if(result.modifiedCount !== 1) return {
-                        message: 'Não foi possível atualizar!'
-                    }
+                    const result = await this.db.delete(id);
+
+                    if (result.deletedCount !== 1) return Boom.preconditionFailed("ID não encontrado no banco!");
 
                     return {
-                        message: 'Heroi atualizado com sucesso!'
+                        message: 'Heroi removido com sucesso!'
                     }
-                }catch(error){
+                } catch (error) {
                     console.error("Deu ruim", error.message);
-                    return 'Erro interno!'
+                    return Boom.internal()
                 }
             }
         }
