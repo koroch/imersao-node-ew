@@ -6,6 +6,10 @@ const failAction = async (request, response, error) => {
     throw error;
 }
 
+const headers = Joi.object({
+    authorization: Joi.string().required()
+}).unknown()
+
 class HeroRoutes extends BaseRoute {
     constructor(db) {
         super() //sempre chamar classe pai quando usar herança
@@ -30,7 +34,8 @@ class HeroRoutes extends BaseRoute {
                         skip: Joi.number().integer().default(0),
                         limit: Joi.number().integer().default(10),
                         nome: Joi.string().min(3).max(100)
-                    })
+                    }),
+                    headers
                 }
             },
             handler: (request, response) => {
@@ -59,7 +64,8 @@ class HeroRoutes extends BaseRoute {
                     payload: Joi.object({
                         nome: Joi.string().required().min(3).max(100),
                         poder: Joi.string().required().min(2).max(20)
-                    })
+                    }),
+                    headers
                 }
             },
             handler: async (request, response) => {
@@ -93,7 +99,8 @@ class HeroRoutes extends BaseRoute {
                     payload: Joi.object({
                         nome: Joi.string().min(3).max(100),
                         poder: Joi.string().min(2).max(20)
-                    })
+                    }),
+                    headers
                 }
             },
             handler: async (request, response) => {
@@ -129,7 +136,8 @@ class HeroRoutes extends BaseRoute {
                 validate: {
                     params: Joi.object({
                         id: Joi.string().required()
-                    })
+                    }),
+                    headers
                 }
             },
             handler: async (request, response) => {

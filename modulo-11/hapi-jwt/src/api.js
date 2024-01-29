@@ -5,9 +5,10 @@ const HeroiSchema = require('./database/strategies/mongodb/schemas/heroisSchema'
 const HeroRoutes = require('./routes/heroRoutes');
 const AuthRoutes = require('./routes/authRoutes');
 
-const HapiSwagger = require('hapi-swagger')
-const Vision = require('vision')
-const Inert = require('inert')
+const HapiSwagger = require('hapi-swagger');
+const Vision = require('vision');
+const Inert = require('inert');
+const HapiJwt = require('hapi-auth-jwt2');
 const JWT_SECRET = "68066723814071c12c9a561df38e5b84";
 
 const app = new Hapi.Server({
@@ -30,6 +31,7 @@ async function main() {
         lang: 'pt'
     }
     await app.register([
+        HapiJwt,
         Vision,
         Inert,
         {
@@ -37,6 +39,18 @@ async function main() {
             options: swaggerOptions
         }
     ])
+
+    app.auth.strategy('jwt', 'jwt', {
+        key: JWT_SECRET,
+        validate: (dado, request) => {
+            //verifica ativo
+
+            return {
+                isValid: true
+            }
+        }
+    })
+    app.auth.default('jwt');
 
     app.route([
         ...mapRoutes(new HeroRoutes(context), HeroRoutes.methods()),

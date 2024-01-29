@@ -1,9 +1,7 @@
 const assert = require('assert');
 const api = require('../api');
 
-//let app = {}
-
-describe.only('Auth test suite', function () {
+describe('Auth test suite', function () {
     this.beforeAll(async () => {
         app = await api;
     })
@@ -22,6 +20,6 @@ describe.only('Auth test suite', function () {
         const dados = JSON.parse(result.payload);
 
         assert.deepEqual(statusCode, 200);
-        assert.ok(dados.token.lenght > 10);
+        assert.ok(dados.token.length > 10);
     })
 })
