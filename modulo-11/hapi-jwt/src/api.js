@@ -3,10 +3,12 @@ const Context = require('./database/strategies/base/contextStrategy');
 const MongoDB = require('./database/strategies/mongodb/mongodb');
 const HeroiSchema = require('./database/strategies/mongodb/schemas/heroisSchema');
 const HeroRoutes = require('./routes/heroRoutes');
+const AuthRoutes = require('./routes/authRoutes');
 
 const HapiSwagger = require('hapi-swagger')
 const Vision = require('vision')
 const Inert = require('inert')
+const JWT_SECRET = "68066723814071c12c9a561df38e5b84";
 
 const app = new Hapi.Server({
     port: 5000
@@ -36,7 +38,10 @@ async function main() {
         }
     ])
 
-    app.route(mapRoutes(new HeroRoutes(context), HeroRoutes.methods()))
+    app.route([
+        ...mapRoutes(new HeroRoutes(context), HeroRoutes.methods()),
+        ...mapRoutes(new AuthRoutes(JWT_SECRET), AuthRoutes.methods())
+    ])
 
     await app.start()
     console.log("Servidor rodando na porta ", app.info.port);
