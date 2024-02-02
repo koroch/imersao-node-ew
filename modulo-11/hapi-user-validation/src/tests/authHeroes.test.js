@@ -6,19 +6,21 @@ const UsuarioSchema = require('../database/strategies/postgres/schemas/usuarioSc
 
 const USER = {
     username: 'joaoninguem',
-    password: '123456'
+    password: '123'
 }
 
 const USER_DB = {
-    ...USER,
-    password: ''
+    ...USER.username.toLocaleLowerCase(),
+    password: '$2b$04$MTA7DaWijT9dm95RRMtwgeZKiXj3z0HD1H/5GwM7IuftuqNjWLPOy'
 }
 
 describe('Auth test suite', function () {
     this.beforeAll(async () => {
         app = await api;
         const connectionPostgres = await Postgres.connect();
-        const model = await Postgres.defineModel(connectionPostgres, UsuarioSchema);
+        const usuarioSchema = await Postgres.defineModel(connectionPostgres, UsuarioSchema);
+        const contextPostgres = new Context(new Postgres(connectionPostgres, usuarioSchema));
+        await contextPostgres.update(null, USER_DB, true);
     })
 
     it('deve obter um token', async () => {
@@ -30,6 +32,7 @@ describe('Auth test suite', function () {
 
         const statusCode = result.statusCode;
         const dados = JSON.parse(result.payload);
+        console.log(dados)
 
         assert.deepEqual(statusCode, 200);
         assert.ok(dados.token.length > 10);

@@ -5,6 +5,9 @@ const HeroiSchema = require('./database/strategies/mongodb/schemas/heroisSchema'
 const HeroRoutes = require('./routes/heroRoutes');
 const AuthRoutes = require('./routes/authRoutes');
 
+const Postgres = require('./database/strategies/postgres/postgres');
+const UsuarioSchema = require('./database/strategies/postgres/schemas/usuarioSchema');
+
 const HapiSwagger = require('hapi-swagger');
 const Vision = require('vision');
 const Inert = require('inert');
@@ -22,6 +25,10 @@ function mapRoutes(instance, methods) {
 async function main() {
     const connection = MongoDB.connect();
     const context = new Context(new MongoDB(connection, HeroiSchema));
+
+    const connectionPostgres = await Postgres.connect();
+    const usuarioSchema = await Postgres.defineModel(connectionPostgres, UsuarioSchema);
+    const contextPostgres = new Context(new Postgres(connectionPostgres, usuarioSchema));
 
     const swaggerOptions = {
         info: {
@@ -54,7 +61,7 @@ async function main() {
 
     app.route([
         ...mapRoutes(new HeroRoutes(context), HeroRoutes.methods()),
-        ...mapRoutes(new AuthRoutes(JWT_SECRET), AuthRoutes.methods())
+        ...mapRoutes(new AuthRoutes(JWT_SECRET, contextPostgres), AuthRoutes.methods())
     ])
 
     await app.start()
