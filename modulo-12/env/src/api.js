@@ -12,10 +12,10 @@ const HapiSwagger = require('hapi-swagger');
 const Vision = require('vision');
 const Inert = require('inert');
 const HapiJwt = require('hapi-auth-jwt2');
-const JWT_SECRET = "68066723814071c12c9a561df38e5b84";
+const JWT_SECRET = process.env.JWT_KEY;
 
 const app = new Hapi.Server({
-    port: 5000
+    port: process.env.PORT
 })
 
 function mapRoutes(instance, methods) {
